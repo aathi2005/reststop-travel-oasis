@@ -1,4 +1,3 @@
-
 import { Restroom, Review } from "@/types";
 import { getCleanlinessTier } from "@/data/restrooms";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/hooks/use-toast";
 import { 
   Toilet, MapPin, Clock, ArrowLeft, Star, Accessibility, 
   Baby, Users, CheckCircle, Clock8, Building, Sparkles
@@ -28,6 +28,19 @@ export function RestroomDetail({ restroom, onBack }: RestroomDetailProps) {
       hour: 'numeric',
       minute: '2-digit'
     });
+  };
+
+  const handleReportCleanliness = () => {
+    toast({
+      title: "Report Submitted",
+      description: "Thank you for reporting the cleanliness status.",
+    });
+  };
+
+  const handleGetDirections = () => {
+    // Open Google Maps with directions to the restroom
+    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${restroom.location.lat},${restroom.location.lng}&travelmode=driving`;
+    window.open(mapsUrl, '_blank');
   };
 
   return (
@@ -161,8 +174,8 @@ export function RestroomDetail({ restroom, onBack }: RestroomDetailProps) {
       
       <div className="mt-auto pt-4">
         <div className="grid grid-cols-2 gap-2">
-          <Button>Report Cleanliness</Button>
-          <Button variant="secondary">Get Directions</Button>
+          <Button onClick={handleReportCleanliness}>Report Cleanliness</Button>
+          <Button variant="secondary" onClick={handleGetDirections}>Get Directions</Button>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, Bell, UserCircle, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
+import { Link, useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   onSearch: (query: string) => void;
@@ -12,6 +13,7 @@ interface HeaderProps {
 export function Header({ onSearch }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,8 +24,12 @@ export function Header({ onSearch }: HeaderProps) {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
-          <MapPin className="h-6 w-6 text-reststop-primary" />
-          <h1 className="text-xl font-bold text-reststop-primary">RestStop</h1>
+          <Link to="/">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-6 w-6 text-reststop-primary" />
+              <h1 className="text-xl font-bold text-reststop-primary">RestStop</h1>
+            </div>
+          </Link>
         </div>
         
         <form onSubmit={handleSubmit} className="hidden md:flex flex-1 items-center justify-center px-4">
@@ -54,10 +60,20 @@ export function Header({ onSearch }: HeaderProps) {
               <Moon className="h-5 w-5" />
             )}
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-full">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full"
+            onClick={() => navigate('/notifications')}
+          >
             <Bell className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-full">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-full"
+            onClick={() => navigate('/profile')}
+          >
             <UserCircle className="h-5 w-5" />
           </Button>
         </div>

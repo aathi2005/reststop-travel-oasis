@@ -1,18 +1,23 @@
-
 import { Restroom } from "../types";
+
+// Coimbatore, Tamil Nadu, India coordinates
+export const defaultLocation = {
+  lat: 11.0168,
+  lng: 76.9558
+};
 
 // Mock restrooms data - in a real app this would come from an API
 const mockRestrooms: Restroom[] = [
   {
     id: "1",
-    name: "Central Park Public Restroom",
-    description: "Clean public restroom located near the main entrance of Central Park",
+    name: "RS Puram Public Restroom",
+    description: "Clean public restroom located near RS Puram main area",
     location: {
-      lat: 40.7812,
-      lng: -73.9665,
-      address: "Central Park Main Entrance",
-      city: "New York City",
-      state: "NY"
+      lat: 11.0128,
+      lng: 76.9502,
+      address: "Near RS Puram Main Road",
+      city: "Coimbatore",
+      state: "Tamil Nadu"
     },
     amenities: ["toilet", "sink", "hand_dryer"],
     cleanliness: {
@@ -27,7 +32,7 @@ const mockRestrooms: Restroom[] = [
       {
         id: "r1",
         userId: "u123",
-        userName: "TravelLover",
+        userName: "LocalUser",
         rating: 4,
         comment: "Very clean for a public restroom. Soap dispensers were full.",
         date: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
@@ -36,7 +41,7 @@ const mockRestrooms: Restroom[] = [
       {
         id: "r2",
         userId: "u456",
-        userName: "RoadTripper",
+        userName: "TravelerJ",
         rating: 5,
         comment: "Surprisingly well maintained. No waiting line when I visited.",
         date: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
@@ -51,14 +56,14 @@ const mockRestrooms: Restroom[] = [
   },
   {
     id: "2",
-    name: "Starbucks - Times Square",
+    name: "Café Coffee Day - Fun Republic Mall",
     description: "Clean facilities for customers of this popular coffee chain",
     location: {
-      lat: 40.7580,
-      lng: -73.9855,
-      address: "1540 Broadway",
-      city: "New York City",
-      state: "NY"
+      lat: 11.0218,
+      lng: 76.9613,
+      address: "Fun Republic Mall, Avinashi Road",
+      city: "Coimbatore",
+      state: "Tamil Nadu"
     },
     amenities: ["toilet", "sink", "hand_dryer", "hand_soap", "paper_towels"],
     cleanliness: {
@@ -73,7 +78,7 @@ const mockRestrooms: Restroom[] = [
       {
         id: "r3",
         userId: "u789",
-        userName: "CityExplorer",
+        userName: "CoffeeLover",
         rating: 5,
         comment: "Always clean. You need to be a customer but worth buying a coffee for access.",
         date: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
@@ -83,19 +88,19 @@ const mockRestrooms: Restroom[] = [
     businessInfo: {
       type: "cafe",
       partnerStatus: "premium",
-      openHours: "5:30 AM - 11:00 PM"
+      openHours: "10:00 AM - 10:00 PM"
     }
   },
   {
     id: "3",
-    name: "Grand Central Terminal Restrooms",
-    description: "Public facilities in the historic train station",
+    name: "Coimbatore Railway Station Restrooms",
+    description: "Public facilities in the main railway station",
     location: {
-      lat: 40.7527,
-      lng: -73.9772,
-      address: "89 E 42nd St",
-      city: "New York City",
-      state: "NY"
+      lat: 11.0015,
+      lng: 76.9567,
+      address: "Railway Station Road",
+      city: "Coimbatore",
+      state: "Tamil Nadu"
     },
     amenities: ["toilet", "sink", "hand_dryer", "hand_soap"],
     cleanliness: {
@@ -119,7 +124,7 @@ const mockRestrooms: Restroom[] = [
       {
         id: "r5",
         userId: "u202",
-        userName: "NYCVisitor",
+        userName: "CBEVisitor",
         rating: 4,
         comment: "Well maintained considering how busy this station is.",
         date: new Date(Date.now() - 432000000).toISOString(), // 5 days ago
@@ -129,19 +134,19 @@ const mockRestrooms: Restroom[] = [
     businessInfo: {
       type: "public",
       partnerStatus: "none",
-      openHours: "5:30 AM - 1:30 AM"
+      openHours: "24/7"
     }
   },
   {
     id: "4",
-    name: "Hilton Midtown Hotel",
+    name: "Westin Hotel",
     description: "Luxurious restrooms in the hotel lobby",
     location: {
-      lat: 40.7622,
-      lng: -73.9779,
-      address: "1335 6th Ave",
-      city: "New York City",
-      state: "NY"
+      lat: 11.0300,
+      lng: 76.9540,
+      address: "Avinashi Road",
+      city: "Coimbatore",
+      state: "Tamil Nadu"
     },
     amenities: ["toilet", "sink", "hand_dryer", "hand_soap", "lotion", "mouthwash"],
     cleanliness: {
@@ -171,20 +176,20 @@ const mockRestrooms: Restroom[] = [
   },
   {
     id: "5",
-    name: "Bryant Park Public Restroom",
-    description: "Award-winning public restroom known for cleanliness",
+    name: "VOC Park Public Restroom",
+    description: "Public restroom near the popular city park",
     location: {
-      lat: 40.7536,
-      lng: -73.9832,
-      address: "Bryant Park",
-      city: "New York City",
-      state: "NY"
+      lat: 11.0058,
+      lng: 76.9725,
+      address: "VOC Park Road",
+      city: "Coimbatore",
+      state: "Tamil Nadu"
     },
-    amenities: ["toilet", "sink", "hand_dryer", "hand_soap", "attendant"],
+    amenities: ["toilet", "sink", "hand_dryer", "hand_soap"],
     cleanliness: {
-      score: 90,
+      score: 82,
       lastUpdated: new Date(Date.now() - 7200000).toISOString(), // 2 hours ago
-      reports: 312
+      reports: 95
     },
     accessibility: true,
     babyChanging: true,
@@ -194,17 +199,17 @@ const mockRestrooms: Restroom[] = [
         id: "r7",
         userId: "u404",
         userName: "ParkVisitor",
-        rating: 5,
-        comment: "The cleanest public restroom I've ever seen. There's even an attendant.",
+        rating: 4,
+        comment: "Well maintained public restroom. Usually clean.",
         date: new Date(Date.now() - 604800000).toISOString(), // 7 days ago
-        cleanliness: 5
+        cleanliness: 4
       },
       {
         id: "r8",
         userId: "u505",
-        userName: "UrbanExplorer",
+        userName: "CBExplorer",
         rating: 4,
-        comment: "Very nice facilities. Sometimes there's a short wait.",
+        comment: "Decent facilities. Sometimes there's a short wait.",
         date: new Date(Date.now() - 691200000).toISOString(), // 8 days ago
         cleanliness: 4
       }
@@ -212,16 +217,10 @@ const mockRestrooms: Restroom[] = [
     businessInfo: {
       type: "public",
       partnerStatus: "standard",
-      openHours: "7:00 AM - 11:00 PM"
+      openHours: "6:00 AM - 9:00 PM"
     }
   }
 ];
-
-// This would be replaced with actual geolocation or user selection in a real app
-export const defaultLocation = {
-  lat: 40.7580,
-  lng: -73.9855
-};
 
 export const getRestroomsByLocation = (lat: number, lng: number, radius: number = 5): Restroom[] => {
   // Simple distance calculation (not accounting for Earth's curvature)

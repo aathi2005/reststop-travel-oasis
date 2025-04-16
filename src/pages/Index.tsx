@@ -20,9 +20,12 @@ const Index = () => {
 
   useEffect(() => {
     // In a real app, we would use the browser's geolocation API
-    // For this demo, we'll just load all mock restrooms
+    // For this demo, we'll use our default location (Coimbatore)
     const allRestrooms = getAllRestrooms();
     setRestrooms(allRestrooms);
+    
+    // Display a welcome message specific to Coimbatore
+    console.log("Welcome to RestStop Coimbatore, Tamil Nadu!");
   }, []);
 
   const handleSearch = (query: string) => {
@@ -92,7 +95,7 @@ const Index = () => {
               <div className="md:col-span-4 order-1 md:order-2">
                 <div className="bg-white dark:bg-reststop-dark rounded-lg shadow-md p-4">
                   <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold">RestStop</h2>
+                    <h2 className="text-xl font-semibold">RestStop Coimbatore</h2>
                     <div className="flex gap-2">
                       <Button 
                         size="sm" 
@@ -115,7 +118,7 @@ const Index = () => {
                   
                   <div className="space-y-3">
                     <div className="text-sm">
-                      <strong>{restrooms.length}</strong> restrooms found in your area
+                      <strong>{restrooms.length}</strong> restrooms found in Coimbatore
                     </div>
                     
                     <div className="space-y-2">
