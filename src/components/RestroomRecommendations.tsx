@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Restroom } from "@/types";
 import { getRecommendedRestrooms } from "@/data/userRestrooms";
 import { RestroomCard } from "./RestroomCard";
-import { LocalGasStation, Route } from "lucide-react";
+import { Route } from "lucide-react";
 
 interface RestroomRecommendationsProps {
   restrooms: Restroom[];

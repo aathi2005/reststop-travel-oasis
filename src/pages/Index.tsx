@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { Map } from "@/components/Map";
@@ -8,11 +7,13 @@ import { Chatbot } from "@/components/Chatbot";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { Restroom } from "@/types";
 import { getAllRestrooms, getRestroomsByLocation, defaultLocation } from "@/data/restrooms";
-import { getUserRestrooms } from "@/data/userRestrooms";
+import { getUserRestrooms, getNearbyRestrooms } from "@/data/userRestrooms";
 import { Button } from "@/components/ui/button";
-import { MapPin, List, Plus } from "lucide-react";
+import { MapPin, List, Plus, Filter } from "lucide-react";
 import { AddRestroomForm } from "@/components/AddRestroomForm";
 import { RestroomRecommendations } from "@/components/RestroomRecommendations";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
 const Index = () => {
   const [restrooms, setRestrooms] = useState<Restroom[]>([]);
@@ -21,24 +22,88 @@ const Index = () => {
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
   const [isDetailView, setIsDetailView] = useState(false);
   const [isAddingRestroom, setIsAddingRestroom] = useState(false);
+  const [filterRadius, setFilterRadius] = useState<number>(2);
+  const [isUsingLocation, setIsUsingLocation] = useState(false);
+  const [totalRestroomCount, setTotalRestroomCount] = useState(0);
 
   useEffect(() => {
-    // Load both predefined and user-added restrooms
+    // Load the total count of predefined and user-added restrooms
     const allRestrooms = [...getAllRestrooms(), ...getUserRestrooms()];
-    setRestrooms(allRestrooms);
+    setTotalRestroomCount(allRestrooms.length);
+    
+    // Get user's geolocation if available
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          
+          setCurrentLocation(userLocation);
+          setIsUsingLocation(true);
+          
+          // Load nearby restrooms based on user's location and filter radius
+          const nearbyRestrooms = [
+            ...getRestroomsByLocation(userLocation.lat, userLocation.lng, filterRadius),
+            ...getNearbyRestrooms(userLocation.lat, userLocation.lng, filterRadius)
+          ];
+          
+          setRestrooms(nearbyRestrooms);
+          toast.success(`Found ${nearbyRestrooms.length} restrooms within ${filterRadius}km of your location`);
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          // Fallback to default location and load all restrooms
+          loadAllRestrooms();
+          toast.error("Couldn't access your location. Showing all restrooms instead.");
+        }
+      );
+    } else {
+      // Geolocation not available, load all restrooms
+      loadAllRestrooms();
+    }
     
     // Display a welcome message specific to Coimbatore
     console.log("Welcome to RestStop Coimbatore, Tamil Nadu!");
   }, []);
+  
+  // Update restrooms when filter radius changes
+  useEffect(() => {
+    if (isUsingLocation) {
+      const nearbyRestrooms = [
+        ...getRestroomsByLocation(currentLocation.lat, currentLocation.lng, filterRadius),
+        ...getNearbyRestrooms(currentLocation.lat, currentLocation.lng, filterRadius)
+      ];
+      
+      setRestrooms(nearbyRestrooms);
+      toast.info(`Showing restrooms within ${filterRadius}km of your location`);
+    }
+  }, [filterRadius, currentLocation, isUsingLocation]);
+  
+  const loadAllRestrooms = () => {
+    const allRestrooms = [...getAllRestrooms(), ...getUserRestrooms()];
+    setRestrooms(allRestrooms);
+  };
 
   const handleSearch = (query: string) => {
-    // Simple search implementation
+    // Always search in the full dataset
     if (!query) {
-      const allRestrooms = [...getAllRestrooms(), ...getUserRestrooms()];
-      setRestrooms(allRestrooms);
+      if (isUsingLocation) {
+        // If using location, reapply the location filter
+        const nearbyRestrooms = [
+          ...getRestroomsByLocation(currentLocation.lat, currentLocation.lng, filterRadius),
+          ...getNearbyRestrooms(currentLocation.lat, currentLocation.lng, filterRadius)
+        ];
+        setRestrooms(nearbyRestrooms);
+      } else {
+        // Otherwise load all restrooms
+        loadAllRestrooms();
+      }
       return;
     }
     
+    // Search in the complete dataset
     const allData = [...getAllRestrooms(), ...getUserRestrooms()];
     const filtered = allData.filter(
       restroom => 
@@ -65,13 +130,30 @@ const Index = () => {
 
   const handleRestroomAdded = (newRestrooms: Restroom[]) => {
     // Update the restrooms list to include user-added restrooms
-    const allRestrooms = [...getAllRestrooms(), ...newRestrooms];
-    setRestrooms(allRestrooms);
+    if (isUsingLocation) {
+      // If using location, reapply the location filter
+      const nearbyRestrooms = [
+        ...getRestroomsByLocation(currentLocation.lat, currentLocation.lng, filterRadius),
+        ...getNearbyRestrooms(currentLocation.lat, currentLocation.lng, filterRadius)
+      ];
+      setRestrooms(nearbyRestrooms);
+    } else {
+      // Otherwise load all restrooms
+      const allRestrooms = [...getAllRestrooms(), ...newRestrooms];
+      setRestrooms(allRestrooms);
+    }
+    
+    // Update total count
+    setTotalRestroomCount(getAllRestrooms().length + newRestrooms.length);
     setIsAddingRestroom(false);
   };
 
   const handleCancelAddRestroom = () => {
     setIsAddingRestroom(false);
+  };
+  
+  const handleRadiusChange = (value: string) => {
+    setFilterRadius(Number(value));
   };
 
   const selectedRestroom = restrooms.find(r => r.id === selectedId);
@@ -144,8 +226,26 @@ const Index = () => {
                   </div>
                   
                   <div className="space-y-3">
-                    <div className="text-sm">
-                      <strong>{restrooms.length}</strong> restrooms found in Coimbatore
+                    <div className="flex justify-between items-center">
+                      <div className="text-sm">
+                        <strong>{restrooms.length}</strong> of <strong>{totalRestroomCount}</strong> restrooms shown
+                      </div>
+                      
+                      {isUsingLocation && (
+                        <div className="flex items-center gap-2">
+                          <Filter className="h-4 w-4" />
+                          <Select defaultValue={filterRadius.toString()} onValueChange={handleRadiusChange}>
+                            <SelectTrigger className="w-24">
+                              <SelectValue placeholder="Radius" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="2">2 km</SelectItem>
+                              <SelectItem value="4">4 km</SelectItem>
+                              <SelectItem value="10">10 km</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="space-y-2">
