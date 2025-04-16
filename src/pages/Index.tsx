@@ -8,8 +8,11 @@ import { Chatbot } from "@/components/Chatbot";
 import { ThemeProvider } from "@/hooks/use-theme";
 import { Restroom } from "@/types";
 import { getAllRestrooms, getRestroomsByLocation, defaultLocation } from "@/data/restrooms";
+import { getUserRestrooms } from "@/data/userRestrooms";
 import { Button } from "@/components/ui/button";
-import { MapPin, List } from "lucide-react";
+import { MapPin, List, Plus } from "lucide-react";
+import { AddRestroomForm } from "@/components/AddRestroomForm";
+import { RestroomRecommendations } from "@/components/RestroomRecommendations";
 
 const Index = () => {
   const [restrooms, setRestrooms] = useState<Restroom[]>([]);
@@ -17,11 +20,11 @@ const Index = () => {
   const [currentLocation, setCurrentLocation] = useState(defaultLocation);
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
   const [isDetailView, setIsDetailView] = useState(false);
+  const [isAddingRestroom, setIsAddingRestroom] = useState(false);
 
   useEffect(() => {
-    // In a real app, we would use the browser's geolocation API
-    // For this demo, we'll use our default location (Coimbatore)
-    const allRestrooms = getAllRestrooms();
+    // Load both predefined and user-added restrooms
+    const allRestrooms = [...getAllRestrooms(), ...getUserRestrooms()];
     setRestrooms(allRestrooms);
     
     // Display a welcome message specific to Coimbatore
@@ -31,11 +34,13 @@ const Index = () => {
   const handleSearch = (query: string) => {
     // Simple search implementation
     if (!query) {
-      setRestrooms(getAllRestrooms());
+      const allRestrooms = [...getAllRestrooms(), ...getUserRestrooms()];
+      setRestrooms(allRestrooms);
       return;
     }
     
-    const filtered = getAllRestrooms().filter(
+    const allData = [...getAllRestrooms(), ...getUserRestrooms()];
+    const filtered = allData.filter(
       restroom => 
         restroom.name.toLowerCase().includes(query.toLowerCase()) ||
         (restroom.description && restroom.description.toLowerCase().includes(query.toLowerCase())) ||
@@ -54,6 +59,21 @@ const Index = () => {
     setIsDetailView(false);
   };
 
+  const handleAddRestroom = () => {
+    setIsAddingRestroom(true);
+  };
+
+  const handleRestroomAdded = (newRestrooms: Restroom[]) => {
+    // Update the restrooms list to include user-added restrooms
+    const allRestrooms = [...getAllRestrooms(), ...newRestrooms];
+    setRestrooms(allRestrooms);
+    setIsAddingRestroom(false);
+  };
+
+  const handleCancelAddRestroom = () => {
+    setIsAddingRestroom(false);
+  };
+
   const selectedRestroom = restrooms.find(r => r.id === selectedId);
 
   return (
@@ -62,7 +82,14 @@ const Index = () => {
         <Header onSearch={handleSearch} />
         
         <main className="flex-1 container grid md:grid-cols-12 gap-4 py-4">
-          {!isDetailView ? (
+          {isAddingRestroom ? (
+            <div className="col-span-12">
+              <AddRestroomForm 
+                onRestroomAdded={handleRestroomAdded}
+                onCancel={handleCancelAddRestroom}
+              />
+            </div>
+          ) : !isDetailView ? (
             <>
               <div className="md:col-span-8 order-2 md:order-1">
                 {viewMode === "map" ? (
@@ -93,7 +120,7 @@ const Index = () => {
               </div>
               
               <div className="md:col-span-4 order-1 md:order-2">
-                <div className="bg-white dark:bg-reststop-dark rounded-lg shadow-md p-4">
+                <div className="bg-white dark:bg-reststop-dark rounded-lg shadow-md p-4 mb-4">
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold">RestStop Coimbatore</h2>
                     <div className="flex gap-2">
@@ -122,7 +149,17 @@ const Index = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <h3 className="font-medium">Top rated restrooms</h3>
+                      <div className="flex justify-between items-center">
+                        <h3 className="font-medium">Top rated restrooms</h3>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={handleAddRestroom}
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          Add New
+                        </Button>
+                      </div>
                       {restrooms
                         .sort((a, b) => b.cleanliness.score - a.cleanliness.score)
                         .slice(0, 3)
@@ -138,6 +175,11 @@ const Index = () => {
                     </div>
                   </div>
                 </div>
+                
+                <RestroomRecommendations 
+                  restrooms={restrooms}
+                  onSelectRestroom={handleSelectRestroom}
+                />
               </div>
             </>
           ) : selectedRestroom ? (
