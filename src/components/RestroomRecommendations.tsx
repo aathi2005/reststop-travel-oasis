@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Restroom } from "@/types";
 import { getRecommendedRestrooms } from "@/data/userRestrooms";
 import { RestroomCard } from "./RestroomCard";
+import { LocalGasStation, Route } from "lucide-react";
 
 interface RestroomRecommendationsProps {
   restrooms: Restroom[];
@@ -22,16 +23,31 @@ export function RestroomRecommendations({
   const [babyChanging, setBabyChanging] = useState(false);
   const [genderNeutral, setGenderNeutral] = useState(false);
   const [minCleanliness, setMinCleanliness] = useState(70);
+  const [preferFuelStations, setPreferFuelStations] = useState(false);
   const [recommendedRestrooms, setRecommendedRestrooms] = useState<Restroom[]>([]);
   const [hasRecommendations, setHasRecommendations] = useState(false);
 
   const handleGetRecommendations = () => {
-    const recommendations = getRecommendedRestrooms(restrooms, {
+    let recommendations = getRecommendedRestrooms(restrooms, {
       accessibility,
       babyChanging,
       genderNeutral,
       minCleanliness
     });
+    
+    // If fuel station preference is set, prioritize fuel stations
+    if (preferFuelStations) {
+      // Separate fuel stations from others
+      const fuelStations = recommendations.filter(
+        r => r.businessInfo?.type === 'gas_station'
+      );
+      const others = recommendations.filter(
+        r => r.businessInfo?.type !== 'gas_station'
+      );
+      
+      // Concatenate with fuel stations first
+      recommendations = [...fuelStations, ...others].slice(0, 5);
+    }
     
     setRecommendedRestrooms(recommendations);
     setHasRecommendations(true);
@@ -70,6 +86,17 @@ export function RestroomRecommendations({
                 onCheckedChange={(checked) => setGenderNeutral(!!checked)}
               />
               <Label htmlFor="rec-genderNeutral">Must be gender neutral</Label>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="rec-fuelStations"
+                checked={preferFuelStations}
+                onCheckedChange={(checked) => setPreferFuelStations(!!checked)}
+              />
+              <Label htmlFor="rec-fuelStations" className="flex items-center gap-1">
+                <span>Prefer fuel stations</span>
+              </Label>
             </div>
           </div>
           
