@@ -50,7 +50,13 @@ const Index = () => {
           ];
           
           setRestrooms(nearbyRestrooms);
-          toast.success(`Found ${nearbyRestrooms.length} restrooms within ${filterRadius}km of your location`);
+          
+          // Show notification about nearby restrooms
+          if (nearbyRestrooms.length === 0) {
+            toast.warning(`No restrooms found within ${filterRadius}km of your location`);
+          } else {
+            toast.success(`Found ${nearbyRestrooms.length} restrooms within ${filterRadius}km of your location`);
+          }
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -77,7 +83,13 @@ const Index = () => {
       ];
       
       setRestrooms(nearbyRestrooms);
-      toast.info(`Showing restrooms within ${filterRadius}km of your location`);
+      
+      // Show notification about filter radius change
+      if (nearbyRestrooms.length === 0) {
+        toast.warning(`No restrooms found within ${filterRadius}km of your location`);
+      } else {
+        toast.info(`Showing ${nearbyRestrooms.length} restrooms within ${filterRadius}km of your location`);
+      }
     }
   }, [filterRadius, currentLocation, isUsingLocation]);
   

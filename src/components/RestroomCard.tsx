@@ -1,4 +1,3 @@
-
 import { Restroom } from "@/types";
 import { getCleanlinessTier } from "@/data/restrooms";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
