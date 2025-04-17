@@ -54,12 +54,12 @@ export function RestroomCard({ restroom, onClick, isSelected = false, isRecommen
           <div className="flex items-center gap-2">
             <CardTitle>{restroom.name}</CardTitle>
             {businessIcon && isPartner && (
-              <div className="flex items-center" title="Partnership Venue">
+              <div className="flex items-center" aria-label="Partnership Venue">
                 {businessIcon}
               </div>
             )}
             {isRecommended && (
-              <Star size={16} className="fill-yellow-400 text-yellow-400" title="Recommended for you" />
+              <Star size={16} className="fill-yellow-400 text-yellow-400" aria-label="Recommended for you" />
             )}
           </div>
           <Badge variant={
