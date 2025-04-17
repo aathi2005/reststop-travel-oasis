@@ -2,9 +2,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, Bell, UserCircle, Sun, Moon } from "lucide-react";
+import { Search, MapPin, Bell, UserCircle, Sun, Moon, Star, Store, ArrowLeft } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 interface HeaderProps {
   onSearch: (query: string) => void;
@@ -14,16 +14,27 @@ export function Header({ onSearch }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHome = location.pathname === "/";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(searchQuery);
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-4">
+          {!isHome && (
+            <Button variant="ghost" size="icon" onClick={handleBack} className="mr-2">
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          )}
           <Link to="/">
             <div className="flex items-center gap-2">
               <MapPin className="h-6 w-6 text-reststop-primary" />
@@ -32,10 +43,14 @@ export function Header({ onSearch }: HeaderProps) {
           </Link>
           <nav className="hidden md:flex items-center gap-4">
             <Link to="/recommendations" className="text-sm hover:text-reststop-primary">
-              Recommendations
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Star className="h-5 w-5" />
+              </Button>
             </Link>
             <Link to="/partnerships" className="text-sm hover:text-reststop-primary">
-              Partners
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Store className="h-5 w-5" />
+              </Button>
             </Link>
           </nav>
         </div>
