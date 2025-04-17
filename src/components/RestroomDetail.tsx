@@ -1,3 +1,5 @@
+
+import { useState } from "react";
 import { Restroom, Review } from "@/types";
 import { getCleanlinessTier } from "@/data/restrooms";
 import { Button } from "@/components/ui/button";
@@ -5,11 +7,26 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { toast } from "@/hooks/use-toast";
 import { 
   Toilet, MapPin, Clock, ArrowLeft, Star, Accessibility, 
-  Baby, Users, CheckCircle, Clock8, Building, Sparkles
+  Baby, Users, CheckCircle, Clock8, Building, Sparkles, 
+  Upload, Image, Coffee, Utensils, Hotel, Cake
 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface RestroomDetailProps {
   restroom: Restroom;
@@ -19,6 +36,11 @@ interface RestroomDetailProps {
 export function RestroomDetail({ restroom, onBack }: RestroomDetailProps) {
   const cleanlinessTier = getCleanlinessTier(restroom.cleanliness.score);
   const lastUpdated = new Date(restroom.cleanliness.lastUpdated);
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewCleanliness, setReviewCleanliness] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [reviewImages, setReviewImages] = useState<FileList | null>(null);
   
   const formatDate = (date: Date) => {
     return date.toLocaleString('en-US', {
@@ -41,6 +63,41 @@ export function RestroomDetail({ restroom, onBack }: RestroomDetailProps) {
     // Open Google Maps with directions to the restroom
     const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${restroom.location.lat},${restroom.location.lng}&travelmode=driving`;
     window.open(mapsUrl, '_blank');
+  };
+  
+  const handleReviewSubmit = () => {
+    // In a real app, this would upload the images to a server
+    // and save the review to a database
+    
+    // For now, we'll just show a success toast
+    toast({
+      title: "Review Submitted",
+      description: `Thank you for your review${reviewImages ? ' and uploaded images' : ''}!`,
+    });
+    
+    setReviewDialogOpen(false);
+    setReviewRating(5);
+    setReviewCleanliness(5);
+    setReviewComment("");
+    setReviewImages(null);
+  };
+  
+  // Function to get the appropriate business icon
+  const getBusinessIcon = () => {
+    if (!restroom.businessInfo) return null;
+    
+    switch(restroom.businessInfo.type) {
+      case 'cafe':
+        return <Coffee size={20} className="text-reststop-primary" />;
+      case 'restaurant':
+        return <Utensils size={20} className="text-reststop-primary" />;
+      case 'hotel':
+        return <Hotel size={20} className="text-reststop-primary" />;
+      case 'bakery':
+        return <Cake size={20} className="text-reststop-primary" />;
+      default:
+        return <Building size={20} className="text-muted-foreground" />;
+    }
   };
 
   return (
@@ -71,7 +128,7 @@ export function RestroomDetail({ restroom, onBack }: RestroomDetailProps) {
             
             {restroom.businessInfo && (
               <Badge className="flex items-center gap-1">
-                <Building size={14} />
+                {getBusinessIcon()}
                 {restroom.businessInfo.type.replace('_', ' ')}
               </Badge>
             )}
@@ -153,7 +210,7 @@ export function RestroomDetail({ restroom, onBack }: RestroomDetailProps) {
         <div className="bg-white dark:bg-reststop-dark rounded-lg shadow p-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-medium">Reviews</h3>
-            <Button variant="outline" size="sm">Add Review</Button>
+            <Button variant="outline" size="sm" onClick={() => setReviewDialogOpen(true)}>Add Review</Button>
           </div>
           
           <ScrollArea className="h-60">
@@ -178,6 +235,86 @@ export function RestroomDetail({ restroom, onBack }: RestroomDetailProps) {
           <Button variant="secondary" onClick={handleGetDirections}>Get Directions</Button>
         </div>
       </div>
+
+      <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add Review</DialogTitle>
+            <DialogDescription>
+              Share your experience at {restroom.name}. Upload images to help others.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="rating">Overall Rating</Label>
+              <div className="flex items-center gap-2">
+                <Slider
+                  id="rating"
+                  min={1}
+                  max={5}
+                  step={1}
+                  value={[reviewRating]}
+                  onValueChange={(values) => setReviewRating(values[0])}
+                />
+                <span className="font-medium w-8">{reviewRating}/5</span>
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="cleanliness">Cleanliness Rating</Label>
+              <div className="flex items-center gap-2">
+                <Slider
+                  id="cleanliness"
+                  min={1}
+                  max={5}
+                  step={1}
+                  value={[reviewCleanliness]}
+                  onValueChange={(values) => setReviewCleanliness(values[0])}
+                />
+                <span className="font-medium w-8">{reviewCleanliness}/5</span>
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="comment">Your Comments</Label>
+              <Textarea
+                id="comment"
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+                placeholder="Share your experience..."
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="images">Upload Images (Optional)</Label>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-md h-32 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  <label htmlFor="images" className="cursor-pointer flex flex-col items-center justify-center">
+                    <Image size={24} className="text-gray-400" />
+                    <p className="text-sm text-gray-500 mt-2">Click to upload images</p>
+                    <Input 
+                      id="images" 
+                      type="file" 
+                      multiple 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={(e) => setReviewImages(e.target.files)}
+                    />
+                  </label>
+                </div>
+                {reviewImages && reviewImages.length > 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    {reviewImages.length} image{reviewImages.length !== 1 ? 's' : ''} selected
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setReviewDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={handleReviewSubmit}>Submit Review</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

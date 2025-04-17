@@ -21,10 +21,11 @@ export interface Restroom {
   genderNeutral: boolean;
   reviews: Review[];
   businessInfo?: {
-    type: 'gas_station' | 'cafe' | 'restaurant' | 'hotel' | 'public' | 'other';
+    type: 'gas_station' | 'cafe' | 'restaurant' | 'hotel' | 'bakery' | 'public' | 'other';
     partnerStatus?: 'premium' | 'standard' | 'none';
     openHours?: string;
   };
+  isNearby?: boolean;
 }
 
 export interface Review {
@@ -35,6 +36,7 @@ export interface Review {
   comment?: string;
   date: string; // ISO date string
   cleanliness: number; // 1-5
+  images?: string[]; // URLs to images
 }
 
 export interface ChatMessage {
@@ -42,4 +44,14 @@ export interface ChatMessage {
   content: string;
   sender: 'user' | 'bot';
   timestamp: string;
+}
+
+export interface Notification {
+  id: string;
+  type: 'alert' | 'location' | 'review' | 'reminder';
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+  relatedId?: string;
 }
