@@ -23,13 +23,21 @@ export function Header({ onSearch }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <Link to="/">
             <div className="flex items-center gap-2">
               <MapPin className="h-6 w-6 text-reststop-primary" />
               <h1 className="text-xl font-bold text-reststop-primary">RestStop</h1>
             </div>
           </Link>
+          <nav className="hidden md:flex items-center gap-4">
+            <Link to="/recommendations" className="text-sm hover:text-reststop-primary">
+              Recommendations
+            </Link>
+            <Link to="/partnerships" className="text-sm hover:text-reststop-primary">
+              Partners
+            </Link>
+          </nav>
         </div>
         
         <form onSubmit={handleSubmit} className="hidden md:flex flex-1 items-center justify-center px-4">

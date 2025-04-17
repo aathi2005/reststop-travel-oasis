@@ -11,7 +11,6 @@ import { getUserRestrooms, getNearbyRestrooms } from "@/data/userRestrooms";
 import { Button } from "@/components/ui/button";
 import { MapPin, List, Plus, Filter } from "lucide-react";
 import { AddRestroomForm } from "@/components/AddRestroomForm";
-import { RestroomRecommendations } from "@/components/RestroomRecommendations";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
@@ -251,9 +250,12 @@ const Index = () => {
                               <SelectValue placeholder="Radius" />
                             </SelectTrigger>
                             <SelectContent>
+                              <SelectItem value="1">1 km</SelectItem>
                               <SelectItem value="2">2 km</SelectItem>
+                              <SelectItem value="3">3 km</SelectItem>
                               <SelectItem value="4">4 km</SelectItem>
-                              <SelectItem value="10">10 km</SelectItem>
+                              <SelectItem value="5">5 km</SelectItem>
+                              <SelectItem value="6">6 km</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -287,11 +289,6 @@ const Index = () => {
                     </div>
                   </div>
                 </div>
-                
-                <RestroomRecommendations 
-                  restrooms={restrooms}
-                  onSelectRestroom={handleSelectRestroom}
-                />
               </div>
             </>
           ) : selectedRestroom ? (

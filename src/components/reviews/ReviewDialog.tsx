@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { Image } from "lucide-react";
@@ -29,10 +28,27 @@ export function ReviewDialog({ open, onOpenChange, restroomName }: ReviewDialogP
   const [reviewImages, setReviewImages] = useState<FileList | null>(null);
   
   const handleReviewSubmit = () => {
+    if (!reviewImages || reviewImages.length === 0) {
+      toast({
+        title: "Image Required",
+        description: "Please upload at least one image with your review",
+        variant: "destructive"
+      });
+      return;
+    }
+
     toast({
       title: "Review Submitted",
-      description: `Thank you for your review${reviewImages ? ' and uploaded images' : ''}!`,
+      description: "Thank you for your review and uploaded images!",
     });
+    
+    // Remind user to review again after some time
+    setTimeout(() => {
+      toast({
+        title: "Review Reminder",
+        description: `How was your experience at ${restroomName}? Consider leaving another review!`,
+      });
+    }, 1000 * 60 * 60 * 24); // 24 hours later
     
     onOpenChange(false);
     setReviewRating(5);
