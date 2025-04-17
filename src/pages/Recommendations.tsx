@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { RestroomRecommendations } from "@/components/RestroomRecommendations";
 import { Header } from "@/components/Header";
 import { getAllRestrooms } from "@/data/restrooms";

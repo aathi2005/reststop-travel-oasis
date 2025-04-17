@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
+import Recommendations from "./pages/Recommendations";
+import Partnerships from "./pages/Partnerships";
 
 // Create a client
 const queryClient = new QueryClient();
